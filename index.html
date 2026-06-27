@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El archivo perdido de la Historia</title>
+  <style>
+    :root{
+      --bg:#efe5cf;
+      --paper:#fffaf0;
+      --ink:#2c241b;
+      --accent:#7a4a22;
+      --accent-2:#b9854c;
+      --success:#2f7d4a;
+      --danger:#a33a32;
+      --info:#315f7a;
+      --shadow:0 10px 30px rgba(56,38,20,.18);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Georgia, "Times New Roman", serif;
+      color:var(--ink);
+      background:
+        linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
+        repeating-linear-gradient(0deg,#eadfc7 0,#eadfc7 24px,#e6d9bf 25px);
+    }
+
+    button, input, textarea{
+      font:inherit;
+    }
+
+    button{
+      cursor:pointer;
+    }
+
+    .app{
+      width:min(1180px, 96%);
+      margin:0 auto;
+      padding:20px 0 36px;
+    }
+
+    .screen{
+      display:none;
+    }
+
+    .screen.active{
+      display:block;
+      animation:fadeIn .35s ease;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(8px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    .panel{
+      background:rgba(255,250,240,.96);
+      border:2px solid rgba(122,74,34,.18);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .hero{
+      padding:34px;
+      text-align:center;
+    }
+
+    .hero-icon{
+      font-size:4rem;
+      margin-bottom:8px;
+    }
+
+    h1,h2,h3{
+      color:#543015;
+      margin-top:0;
+    }
+
+    h1{
+      font-size:clamp(2rem, 4vw, 3.5rem);
+      margin-bottom:12px;
+    }
+
+    .subtitle{
+      max-width:780px;
+      margin:0 auto 22px;
+      line-height:1.55;
+      font-size:1.08rem;
+    }
+
+    .category-intro{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin:26px 0;
+      text-align:left;
+    }
+
+    .category-card{
+      background:#fffdf7;
+      border:1px solid #d8c5a5;
+      border-radius:14px;
+      padding:18px;
+      min-height:150px;
+    }
+
+    .category-card .icon{
+      font-size:2rem;
+      display:block;
+      margin-bottom:8px;
+    }
+
+    .primary-btn,.secondary-btn,.answer-btn,.category-btn{
+      border:none;
+      border-radius:14px;
+      padding:14px 20px;
+      font-weight:700;
+      transition:.2s ease;
+    }
+
+    .primary-btn{
+      color:white;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 6px 15px rgba(122,74,34,.28);
+      font-size:1.05rem;
+    }
+
+    .secondary-btn{
+      background:#eee3cf;
+      color:#4c3018;
+      border:1px solid #c9ad83;
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+    }
+
+    button:focus-visible,
+    .source-card:focus-visible,
+    .drop-zone:focus-visible{
+      outline:4px solid #2a77b6;
+      outline-offset:3px;
+    }
+
+    .game-header{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:18px;
+      align-items:center;
+      padding:18px 20px;
+      margin-bottom:18px;
+    }
+
+    .stats{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .stat{
+      background:#f4ead7;
+      border:1px solid #d5bea0;
+      padding:9px 13px;
+      border-radius:12px;
+      font-weight:700;
+    }
+
+    .sound-btn{
+      border:none;
+      background:#f4ead7;
+      border:1px solid #d5bea0;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+    }
+
+    .progress-wrap{
+      grid-column:1/-1;
+    }
+
+    .progress-label{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:6px;
+      font-size:.95rem;
+      font-weight:700;
+    }
+
+    .progress-track{
+      height:16px;
+      background:#e5d7bd;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #cbb18b;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#6c8c53,#c49a55);
+      transition:width .35s ease;
+    }
+
+    .game-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 290px;
+      gap:18px;
+      align-items:start;
+    }
+
+    .play-area{
+      padding:24px;
+    }
+
+    .mission-label{
+      text-align:center;
+      font-weight:700;
+      color:#6a4423;
+      margin-bottom:12px;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      font-size:.9rem;
+    }
+
+    .source-card{
+      max-width:680px;
+      min-height:260px;
+      margin:0 auto 22px;
+      background:
+        linear-gradient(rgba(255,255,255,.82),rgba(255,255,255,.82)),
+        radial-gradient(circle at 25% 15%,#f2d7aa 0 2px,transparent 3px);
+      border:3px dashed #a87a43;
+      border-radius:18px;
+      padding:28px;
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      box-shadow:0 8px 18px rgba(68,45,20,.13);
+      user-select:none;
+    }
+
+    .source-card.dragging{
+      opacity:.6;
+      transform:scale(.98);
+    }
+
+    .source-icon{
+      font-size:4rem;
+      margin-bottom:10px;
+    }
+
+    .source-card h2{
+      margin-bottom:8px;
+      font-size:1.8rem;
+    }
+
+    .source-card p{
+      margin:0;
+      max-width:560px;
+      line-height:1.5;
+      font-size:1.05rem;
+    }
+
+    .instructions{
+      text-align:center;
+      margin:0 0 16px;
+      font-size:.98rem;
+    }
+
+    .drop-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .drop-zone{
+      border:2px solid #b99970;
+      border-radius:16px;
+      padding:18px 14px;
+      background:#f8f1e5;
+      text-align:center;
+      min-height:140px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      transition:.2s ease;
+      cursor:pointer;
+    }
+
+    .drop-zone:hover,.drop-zone.drag-over{
+      background:#eadcc4;
+      border-color:#825424;
+      transform:translateY(-2px);
+    }
+
+    .drop-zone .zone-icon{
+      font-size:2.2rem;
+      margin-bottom:8px;
+    }
+
+    .drop-zone strong{
+      font-size:1.05rem;
+    }
+
+    .feedback{
+      margin-top:18px;
+      border-radius:14px;
+      padding:14px 16px;
+      min-height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-weight:700;
+      line-height:1.4;
+      border:1px solid transparent;
+    }
+
+    .feedback.neutral{
+      background:#f1e8d7;
+      border-color:#d8c5a5;
+      color:#5a4127;
+    }
+
+    .feedback.success{
+      background:#e4f2e8;
+      border-color:#8ec29c;
+      color:#235d37;
+    }
+
+    .feedback.error{
+      background:#f7e5e2;
+      border-color:#d49a94;
+      color:#7a2d27;
+    }
+
+    .side-panel{
+      padding:20px;
+      position:sticky;
+      top:16px;
+    }
+
+    .key-display{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .key-piece{
+      height:54px;
+      border:2px solid #bca27d;
+      border-radius:12px;
+      background:#e8dcc6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.6rem;
+      color:#8d7a60;
+      transition:.25s ease;
+      position:relative;
+    }
+
+    .key-piece.active{
+      background:linear-gradient(135deg,#f5d66d,#c58b27);
+      color:#5b3a00;
+      border-color:#9b6a13;
+      transform:scale(1.04);
+      box-shadow:0 4px 10px rgba(157,107,20,.25);
+    }
+
+    .key-piece.active::after{
+      content:"✓";
+      position:absolute;
+      right:5px;
+      top:2px;
+      font-size:.75rem;
+      font-weight:bold;
+    }
+
+    .side-note{
+      margin-top:16px;
+      line-height:1.45;
+      font-size:.94rem;
+      background:#f5ead6;
+      padding:12px;
+      border-radius:12px;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(26,18,10,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:20;
+    }
+
+    .modal.active{
+      display:flex;
+    }
+
+    .modal-card{
+      width:min(720px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:var(--paper);
+      border-radius:18px;
+      box-shadow:0 20px 50px rgba(0,0,0,.35);
+      padding:26px;
+      border:2px solid #a77941;
+    }
+
+    .question-box{
+      background:#f4ead7;
+      border:1px solid #d7bea0;
+      border-radius:14px;
+      padding:16px;
+      margin:16px 0;
+      line-height:1.45;
+    }
+
+    .answers{
+      display:grid;
+      gap:12px;
+    }
+
+    .answer-btn{
+      background:#fff;
+      border:2px solid #cdb38e;
+      text-align:left;
+      color:#3e2d1d;
+    }
+
+    .answer-btn:hover{
+      border-color:#7a4a22;
+      background:#faf3e6;
+    }
+
+    .answer-btn.correct{
+      background:#e3f1e7;
+      border-color:#59a46f;
+    }
+
+    .answer-btn.incorrect{
+      background:#f6e4e1;
+      border-color:#bd6c64;
+    }
+
+    .modal-feedback{
+      min-height:32px;
+      margin-top:14px;
+      font-weight:700;
+    }
+
+    .final{
+      padding:32px;
+      text-align:center;
+    }
+
+    .final-icon{
+      font-size:5rem;
+      margin-bottom:10px;
+    }
+
+    .score-big{
+      font-size:2rem;
+      font-weight:700;
+      color:#6c431d;
+      margin:14px 0;
+    }
+
+    .reflection{
+      max-width:760px;
+      margin:24px auto;
+      text-align:left;
+    }
+
+    .reflection textarea{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      border:2px solid #c9ac83;
+      border-radius:14px;
+      padding:14px;
+      background:#fffdf8;
+      color:#2f251b;
+    }
+
+    .button-row{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .review-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-top:18px;
+      text-align:left;
+    }
+
+    .review-item{
+      background:#fffdf7;
+      border:1px solid #d6c2a3;
+      border-radius:14px;
+      padding:16px;
+    }
+
+    .review-item h3{
+      margin-bottom:6px;
+      font-size:1.08rem;
+    }
+
+    .review-type{
+      display:inline-block;
+      background:#eadac1;
+      border-radius:999px;
+      padding:4px 9px;
+      font-size:.82rem;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    @media (max-width:900px){
+      .category-intro,.drop-grid{
+        grid-template-columns:1fr;
+      }
+      .game-grid{
+        grid-template-columns:1fr;
+      }
+      .side-panel{
+        position:static;
+      }
+      .key-display{
+        grid-template-columns:repeat(6,1fr);
+      }
+    }
+
+    @media (max-width:600px){
+      .hero,.play-area,.final,.modal-card{
+        padding:20px;
+      }
+      .game-header{
+        grid-template-columns:1fr;
+      }
+      .review-grid{
+        grid-template-columns:1fr;
+      }
+      .key-display{
+        grid-template-columns:repeat(4,1fr);
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation:none !important;
+        transition:none !important;
+        scroll-behavior:auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="startScreen" class="screen active">
+      <div class="panel hero">
+        <div class="hero-icon" aria-hidden="true">🏛️🗝️</div>
+        <h1>El archivo perdido de la Historia</h1>
+        <p class="subtitle">
+          ¡Alerta, Agentes 2030! El archivo del Museo del Tiempo ha sido saboteado.
+          Varias fuentes históricas han perdido su clasificación. Vuestra misión consiste
+          en identificar cada fuente, archivarla correctamente y recuperar la Llave del Tiempo.
+        </p>
+
+        <div class="category-intro">
+          <article class="category-card">
+            <span class="icon" aria-hidden="true">📜</span>
+            <h2>Fuentes escritas</h2>
+            <p>Transmiten información mediante textos, signos o representaciones escritas.</p>
+          </article>
+          <article class="category-card">
+            <span class="icon" aria-hidden="true">🏺</span>
+            <h2>Fuentes materiales</h2>
+            <p>Son objetos, construcciones o restos físicos conservados del pasado.</p>
+          </article>
+          <article class="category-card">
+            <span class="icon" aria-hidden="true">🎙️</span>
+            <h2>Fuentes orales</h2>
+            <p>Recogen recuerdos, relatos y testimonios transmitidos mediante la voz.</p>
+          </article>
+        </div>
+
+        <button id="startBtn" class="primary-btn">Comenzar misión</button>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <header class="panel game-header">
+        <div class="stats" aria-live="polite">
+          <span class="stat">Puntuación: <strong id="score">0</strong>/24</span>
+          <span class="stat">Completadas: <strong id="completed">0</strong>/12</span>
+          <span class="stat">Intentos en esta fuente: <strong id="attempts">0</strong></span>
+        </div>
+        <button id="soundBtn" class="sound-btn" aria-pressed="true">🔊 Sonido activado</button>
+
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span id="progressText">Fuente 1 de 12</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track" aria-label="Progreso del juego">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="game-grid">
+        <section class="panel play-area">
+          <div class="mission-label">Clasifica la fuente histórica</div>
+
+          <article id="sourceCard" class="source-card" draggable="true" tabindex="0" aria-describedby="sourceDescription">
+            <div id="sourceIcon" class="source-icon" aria-hidden="true">📜</div>
+            <h2 id="sourceName">Fuente histórica</h2>
+            <p id="sourceDescription">Descripción de la fuente.</p>
+          </article>
+
+          <p class="instructions">
+            Arrastra la tarjeta o pulsa una de las categorías. También puedes usar el teclado: 1 escrita, 2 material y 3 oral.
+          </p>
+
+          <div class="drop-grid">
+            <button class="drop-zone" data-type="escrita" aria-label="Clasificar como fuente escrita">
+              <span class="zone-icon" aria-hidden="true">📜</span>
+              <strong>Fuente escrita</strong>
+            </button>
+            <button class="drop-zone" data-type="material" aria-label="Clasificar como fuente material">
+              <span class="zone-icon" aria-hidden="true">🏺</span>
+              <strong>Fuente material</strong>
+            </button>
+            <button class="drop-zone" data-type="oral" aria-label="Clasificar como fuente oral">
+              <span class="zone-icon" aria-hidden="true">🎙️</span>
+              <strong>Fuente oral</strong>
+            </button>
+          </div>
+
+          <div id="feedback" class="feedback neutral" aria-live="assertive">
+            Analiza cómo se ha conservado esta información y selecciona su categoría.
+          </div>
+        </section>
+
+        <aside class="panel side-panel">
+          <h2>Llave del Tiempo</h2>
+          <p>Cada fuente completada activa una pieza.</p>
+          <div id="keyDisplay" class="key-display" aria-label="Doce piezas de la Llave del Tiempo"></div>
+          <div class="side-note">
+            <strong>Consejo del historiador:</strong> una fuente debe situarse en su tiempo,
+            espacio y contexto para interpretarla correctamente.
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="finalScreen" class="screen">
+      <div class="panel final">
+        <div class="final-icon" aria-hidden="true">🗝️✨</div>
+        <h1>¡Misión completada!</h1>
+        <p>
+          Habéis reorganizado el archivo y recuperado la Llave del Tiempo.
+          El Museo del Tiempo puede volver a abrir sus puertas.
+        </p>
+        <div id="finalScore" class="score-big">Puntuación: 0/24</div>
+        <p id="finalMessage"></p>
+
+        <div class="reflection">
+          <label for="reflectionText"><strong>Pregunta final:</strong></label>
+          <p>¿Por qué necesita un historiador consultar diferentes tipos de fuentes?</p>
+          <textarea id="reflectionText" placeholder="Escribe aquí tu reflexión..."></textarea>
+        </div>
+
+        <div class="button-row">
+          <button id="restartBtn" class="primary-btn">Volver a jugar</button>
+          <button id="reviewBtn" class="secondary-btn">Revisar las fuentes</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviewScreen" class="screen">
+      <div class="panel final">
+        <h1>Revisión de las fuentes</h1>
+        <p>Consulta la clasificación correcta y lo que permite conocer cada fuente.</p>
+        <div id="reviewGrid" class="review-grid"></div>
+        <div class="button-row" style="margin-top:20px">
+          <button id="backFinalBtn" class="secondary-btn">Volver al resultado</button>
+          <button id="restartFromReviewBtn" class="primary-btn">Volver a jugar</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="questionModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="questionTitle">
+    <div class="modal-card">
+      <h2 id="questionTitle">¡Clasificación correcta!</h2>
+      <p id="sourceExplanation"></p>
+
+      <div class="question-box">
+        <strong>Pregunta de interpretación</strong>
+        <p id="questionText"></p>
+      </div>
+
+      <div id="answers" class="answers"></div>
+      <div id="modalFeedback" class="modal-feedback" aria-live="assertive"></div>
+      <button id="continueBtn" class="primary-btn hidden" style="margin-top:14px">Continuar</button>
+    </div>
+  </div>
+
+  <script>
+    const sources = [
+      {
+        nombre:"Carta antigua",
+        icono:"✉️",
+        descripcion:"Un texto personal escrito hace muchos años y conservado en un archivo.",
+        tipo:"escrita",
+        explicacion:"Es una fuente escrita porque conserva información mediante un texto.",
+        pregunta:"¿Qué puede ayudarnos a conocer una carta antigua?",
+        respuestaCorrecta:"Los pensamientos, experiencias o noticias de quien la escribió.",
+        opciones:[
+          "Los pensamientos, experiencias o noticias de quien la escribió.",
+          "El material con el que se construían las casas.",
+          "El sonido de las canciones tradicionales."
+        ]
+      },
+      {
+        nombre:"Periódico antiguo",
+        icono:"📰",
+        descripcion:"Una publicación con noticias, anuncios y opiniones de otra época.",
+        tipo:"escrita",
+        explicacion:"Es una fuente escrita que recoge noticias, anuncios y opiniones de una época.",
+        pregunta:"¿Qué información puede ofrecer un periódico?",
+        respuestaCorrecta:"Noticias, acontecimientos y opiniones de una época.",
+        opciones:[
+          "Noticias, acontecimientos y opiniones de una época.",
+          "La forma exacta de una herramienta prehistórica.",
+          "Los recuerdos personales de una conversación."
+        ]
+      },
+      {
+        nombre:"Mapa histórico",
+        icono:"🗺️",
+        descripcion:"Una representación antigua de territorios, fronteras y lugares.",
+        tipo:"escrita",
+        explicacion:"Es una fuente escrita y gráfica que representa un territorio en un momento determinado.",
+        pregunta:"¿Qué podemos estudiar mediante un mapa histórico?",
+        respuestaCorrecta:"La organización y los cambios de un territorio.",
+        opciones:[
+          "La organización y los cambios de un territorio.",
+          "El sonido de una lengua antigua.",
+          "La textura de una vestimenta."
+        ]
+      },
+      {
+        nombre:"Censo de población",
+        icono:"📋",
+        descripcion:"Un registro que recoge datos sobre las personas que vivían en un lugar.",
+        tipo:"escrita",
+        explicacion:"Es un documento escrito que registra información sobre la población.",
+        pregunta:"¿Para qué puede servir un censo?",
+        respuestaCorrecta:"Para conocer cuántas personas vivían en un lugar y algunas de sus características.",
+        opciones:[
+          "Para conocer cuántas personas vivían en un lugar y algunas de sus características.",
+          "Para conocer el sonido de las fiestas populares.",
+          "Para saber cómo se utilizaba una herramienta."
+        ]
+      },
+      {
+        nombre:"Moneda romana",
+        icono:"🪙",
+        descripcion:"Un objeto metálico antiguo con símbolos, nombres e imágenes.",
+        tipo:"material",
+        explicacion:"Es una fuente material porque es un objeto físico conservado del pasado.",
+        pregunta:"¿Qué puede mostrarnos una moneda antigua?",
+        respuestaCorrecta:"La economía, los símbolos y los gobernantes de una sociedad.",
+        opciones:[
+          "La economía, los símbolos y los gobernantes de una sociedad.",
+          "Los recuerdos personales de una familia.",
+          "Las noticias publicadas durante una semana."
+        ]
+      },
+      {
+        nombre:"Herramienta agrícola antigua",
+        icono:"🛠️",
+        descripcion:"Un utensilio utilizado para trabajar la tierra en otra época.",
+        tipo:"material",
+        explicacion:"Es una fuente material que permite estudiar las técnicas de trabajo de una sociedad.",
+        pregunta:"¿Qué podemos conocer mediante una herramienta antigua?",
+        respuestaCorrecta:"Cómo trabajaban las personas y qué técnicas utilizaban.",
+        opciones:[
+          "Cómo trabajaban las personas y qué técnicas utilizaban.",
+          "Las opiniones de un periodista.",
+          "La voz de una persona que cuenta un recuerdo."
+        ]
+      },
+      {
+        nombre:"Castillo histórico",
+        icono:"🏰",
+        descripcion:"Una construcción defensiva conservada como parte del patrimonio.",
+        tipo:"material",
+        explicacion:"Es una fuente material y patrimonial porque es una construcción conservada del pasado.",
+        pregunta:"¿Qué puede enseñarnos un edificio histórico?",
+        respuestaCorrecta:"Cómo se construía y cómo se organizaba la sociedad.",
+        opciones:[
+          "Cómo se construía y cómo se organizaba la sociedad.",
+          "Las palabras exactas de una conversación.",
+          "Las noticias de un periódico."
+        ]
+      },
+      {
+        nombre:"Vestimenta antigua",
+        icono:"👘",
+        descripcion:"Una prenda utilizada por personas de otra época.",
+        tipo:"material",
+        explicacion:"Es una fuente material que proporciona información sobre la vida cotidiana.",
+        pregunta:"¿Qué información puede aportar una vestimenta?",
+        respuestaCorrecta:"Las costumbres, los materiales y las diferencias sociales.",
+        opciones:[
+          "Las costumbres, los materiales y las diferencias sociales.",
+          "La cantidad de habitantes registrada en un censo.",
+          "La voz de una persona entrevistada."
+        ]
+      },
+      {
+        nombre:"Entrevista grabada a una persona mayor",
+        icono:"🎤",
+        descripcion:"Una grabación en la que una persona cuenta recuerdos de su vida.",
+        tipo:"oral",
+        explicacion:"Es una fuente oral porque conserva un testimonio transmitido mediante la voz.",
+        pregunta:"¿Qué aporta un testimonio oral?",
+        respuestaCorrecta:"Recuerdos y experiencias personales sobre el pasado.",
+        opciones:[
+          "Recuerdos y experiencias personales sobre el pasado.",
+          "La estructura física de una muralla.",
+          "La cantidad de monedas utilizadas."
+        ]
+      },
+      {
+        nombre:"Relato de una trabajadora de una antigua fábrica",
+        icono:"🏭",
+        descripcion:"Una persona narra cómo era su trabajo y su vida cotidiana.",
+        tipo:"oral",
+        explicacion:"Es una fuente oral que permite conocer una experiencia personal relacionada con el trabajo.",
+        pregunta:"¿Qué podemos conocer a través de este testimonio?",
+        respuestaCorrecta:"Las condiciones de trabajo y la vida cotidiana.",
+        opciones:[
+          "Las condiciones de trabajo y la vida cotidiana.",
+          "Los límites exactos de un territorio.",
+          "Los materiales de una moneda."
+        ]
+      },
+      {
+        nombre:"Canción tradicional",
+        icono:"🎶",
+        descripcion:"Una canción transmitida mediante la voz entre distintas generaciones.",
+        tipo:"oral",
+        explicacion:"Es una fuente oral porque se ha conservado y transmitido mediante la voz.",
+        pregunta:"¿Qué puede conservar una canción tradicional?",
+        respuestaCorrecta:"Costumbres, acontecimientos y formas de expresión de una comunidad.",
+        opciones:[
+          "Costumbres, acontecimientos y formas de expresión de una comunidad.",
+          "El número de habitantes de una ciudad.",
+          "La estructura de un castillo."
+        ]
+      },
+      {
+        nombre:"Testimonio sobre la escuela del pasado",
+        icono:"🏫",
+        descripcion:"Una persona explica cómo era su escuela durante la infancia.",
+        tipo:"oral",
+        explicacion:"Es una fuente oral que recoge recuerdos sobre la educación y la vida cotidiana.",
+        pregunta:"¿Qué podría compararse con este testimonio?",
+        respuestaCorrecta:"La escuela del pasado y la escuela actual.",
+        opciones:[
+          "La escuela del pasado y la escuela actual.",
+          "El valor económico de una moneda.",
+          "La forma de las fronteras de un mapa."
+        ]
+      }
+    ];
+
+    const els = {
+      startScreen: document.getElementById("startScreen"),
+      gameScreen: document.getElementById("gameScreen"),
+      finalScreen: document.getElementById("finalScreen"),
+      reviewScreen: document.getElementById("reviewScreen"),
+      startBtn: document.getElementById("startBtn"),
+      restartBtn: document.getElementById("restartBtn"),
+      reviewBtn: document.getElementById("reviewBtn"),
+      backFinalBtn: document.getElementById("backFinalBtn"),
+      restartFromReviewBtn: document.getElementById("restartFromReviewBtn"),
+      soundBtn: document.getElementById("soundBtn"),
+      sourceCard: document.getElementById("sourceCard"),
+      sourceIcon: document.getElementById("sourceIcon"),
+      sourceName: document.getElementById("sourceName"),
+      sourceDescription: document.getElementById("sourceDescription"),
+      feedback: document.getElementById("feedback"),
+      score: document.getElementById("score"),
+      completed: document.getElementById("completed"),
+      attempts: document.getElementById("attempts"),
+      progressText: document.getElementById("progressText"),
+      progressPercent: document.getElementById("progressPercent"),
+      progressBar: document.getElementById("progressBar"),
+      keyDisplay: document.getElementById("keyDisplay"),
+      questionModal: document.getElementById("questionModal"),
+      questionTitle: document.getElementById("questionTitle"),
+      sourceExplanation: document.getElementById("sourceExplanation"),
+      questionText: document.getElementById("questionText"),
+      answers: document.getElementById("answers"),
+      modalFeedback: document.getElementById("modalFeedback"),
+      continueBtn: document.getElementById("continueBtn"),
+      finalScore: document.getElementById("finalScore"),
+      finalMessage: document.getElementById("finalMessage"),
+      reviewGrid: document.getElementById("reviewGrid"),
+      reflectionText: document.getElementById("reflectionText")
+    };
+
+    let gameSources = [];
+    let currentIndex = 0;
+    let totalScore = 0;
+    let classificationAttempts = 0;
+    let classificationScored = false;
+    let questionAnswered = false;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function shuffle(array){
+      const copy = [...array];
+      for(let i = copy.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function showScreen(screen){
+      [els.startScreen, els.gameScreen, els.finalScreen, els.reviewScreen]
+        .forEach(s => s.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function initKey(){
+      els.keyDisplay.innerHTML = "";
+      for(let i = 0; i < sources.length; i++){
+        const piece = document.createElement("div");
+        piece.className = "key-piece";
+        piece.setAttribute("aria-label", `Pieza ${i+1} de la llave`);
+        piece.textContent = "◆";
+        els.keyDisplay.appendChild(piece);
+      }
+    }
+
+    function startGame(){
+      gameSources = shuffle(sources);
+      currentIndex = 0;
+      totalScore = 0;
+      classificationAttempts = 0;
+      classificationScored = false;
+      questionAnswered = false;
+      els.reflectionText.value = "";
+      initKey();
+      showScreen(els.gameScreen);
+      renderCurrentSource();
+      updateStats();
+      setFeedback("Analiza cómo se ha conservado esta información y selecciona su categoría.", "neutral");
+    }
+
+    function renderCurrentSource(){
+      const source = gameSources[currentIndex];
+      els.sourceIcon.textContent = source.icono;
+      els.sourceName.textContent = source.nombre;
+      els.sourceDescription.textContent = source.descripcion;
+      els.sourceCard.setAttribute("aria-label", `${source.nombre}. ${source.descripcion}`);
+      classificationAttempts = 0;
+      classificationScored = false;
+      questionAnswered = false;
+      els.attempts.textContent = "0";
+      setFeedback("Analiza cómo se ha conservado esta información y selecciona su categoría.", "neutral");
+      els.sourceCard.focus();
+    }
+
+    function updateStats(){
+      els.score.textContent = totalScore;
+      els.completed.textContent = currentIndex;
+      els.progressText.textContent = `Fuente ${Math.min(currentIndex + 1, sources.length)} de ${sources.length}`;
+      const percent = Math.round((currentIndex / sources.length) * 100);
+      els.progressPercent.textContent = `${percent}%`;
+      els.progressBar.style.width = `${percent}%`;
+    }
+
+    function setFeedback(message, type){
+      els.feedback.className = `feedback ${type}`;
+      els.feedback.textContent = message;
+    }
+
+    function classify(type){
+      const source = gameSources[currentIndex];
+      classificationAttempts++;
+      els.attempts.textContent = classificationAttempts;
+
+      if(type === source.tipo){
+        if(!classificationScored){
+          totalScore++;
+          classificationScored = true;
+          updateStats();
+        }
+        setFeedback(`✓ ¡Correcto! ${source.explicacion}`, "success");
+        playTone("success");
+        setTimeout(openQuestion, 450);
+      }else{
+        playTone("error");
+        const baseHint = "✗ No es correcto. Piensa en cómo se ha conservado esta información.";
+        const clearerHint = "✗ Pista: ¿ha llegado mediante palabras escritas, mediante un objeto físico o mediante una voz?";
+        setFeedback(classificationAttempts >= 2 ? clearerHint : baseHint, "error");
+      }
+    }
+
+    function openQuestion(){
+      const source = gameSources[currentIndex];
+      els.sourceExplanation.textContent = source.explicacion;
+      els.questionText.textContent = source.pregunta;
+      els.answers.innerHTML = "";
+      els.modalFeedback.textContent = "";
+      els.continueBtn.classList.add("hidden");
+      questionAnswered = false;
+
+      shuffle(source.opciones).forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = option;
+        btn.addEventListener("click", () => answerQuestion(btn, option));
+        els.answers.appendChild(btn);
+      });
+
+      els.questionModal.classList.add("active");
+      const firstAnswer = els.answers.querySelector("button");
+      if(firstAnswer) firstAnswer.focus();
+    }
+
+    function answerQuestion(button, option){
+      if(questionAnswered) return;
+
+      const source = gameSources[currentIndex];
+      const buttons = [...els.answers.querySelectorAll(".answer-btn")];
+
+      if(option === source.respuestaCorrecta){
+        questionAnswered = true;
+        totalScore++;
+        updateStats();
+        button.classList.add("correct");
+        button.textContent = `✓ ${button.textContent}`;
+        els.modalFeedback.textContent = "¡Respuesta correcta! Has interpretado bien la fuente.";
+        els.modalFeedback.style.color = "#235d37";
+        playTone("success");
+        buttons.forEach(b => b.disabled = true);
+        els.continueBtn.classList.remove("hidden");
+        els.continueBtn.focus();
+      }else{
+        button.classList.add("incorrect");
+        button.textContent = `✗ ${button.textContent}`;
+        button.disabled = true;
+        els.modalFeedback.textContent = "Esa respuesta no es correcta. Revisa lo que puede aportar esta fuente.";
+        els.modalFeedback.style.color = "#7a2d27";
+        playTone("error");
+      }
+    }
+
+    function completeSource(){
+      els.questionModal.classList.remove("active");
+      const pieces = els.keyDisplay.querySelectorAll(".key-piece");
+      if(pieces[currentIndex]){
+        pieces[currentIndex].classList.add("active");
+        pieces[currentIndex].textContent = "🗝️";
+      }
+
+      currentIndex++;
+      updateStats();
+
+      if(currentIndex >= gameSources.length){
+        setTimeout(showFinal, 300);
+      }else{
+        renderCurrentSource();
+      }
+    }
+
+    function showFinal(){
+      const percent = 100;
+      els.progressBar.style.width = `${percent}%`;
+      els.progressPercent.textContent = `${percent}%`;
+      els.finalScore.textContent = `Puntuación: ${totalScore}/24`;
+
+      if(totalScore >= 20){
+        els.finalMessage.textContent = "Excelente trabajo. Sois auténticos Guardianes de la Historia.";
+      }else if(totalScore >= 14){
+        els.finalMessage.textContent = "Buen trabajo. Habéis demostrado que sabéis investigar el pasado.";
+      }else{
+        els.finalMessage.textContent = "Habéis completado la misión. Podéis volver a jugar para seguir entrenando.";
+      }
+
+      playTone("finish");
+      showScreen(els.finalScreen);
+    }
+
+    function buildReview(){
+      els.reviewGrid.innerHTML = "";
+      sources.forEach(source => {
+        const article = document.createElement("article");
+        article.className = "review-item";
+        article.innerHTML = `
+          <h3>${source.icono} ${source.nombre}</h3>
+          <span class="review-type">Fuente ${source.tipo}</span>
+          <p>${source.explicacion}</p>
+          <p><strong>Permite conocer:</strong> ${source.respuestaCorrecta}</p>
+        `;
+        els.reviewGrid.appendChild(article);
+      });
+    }
+
+    function playTone(type){
+      if(!soundEnabled) return;
+      try{
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if(type === "success"){
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(760, now + .18);
+          gain.gain.setValueAtTime(.12, now);
+          gain.gain.exponentialRampToValueAtTime(.001, now + .25);
+          osc.start(now);
+          osc.stop(now + .25);
+        }else if(type === "error"){
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.exponentialRampToValueAtTime(160, now + .2);
+          gain.gain.setValueAtTime(.10, now);
+          gain.gain.exponentialRampToValueAtTime(.001, now + .28);
+          osc.start(now);
+          osc.stop(now + .28);
+        }else{
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(660, now + .12);
+          osc.frequency.setValueAtTime(880, now + .24);
+          gain.gain.setValueAtTime(.12, now);
+          gain.gain.exponentialRampToValueAtTime(.001, now + .55);
+          osc.start(now);
+          osc.stop(now + .55);
+        }
+      }catch(e){
+        console.warn("Audio no disponible", e);
+      }
+    }
+
+    function toggleSound(){
+      soundEnabled = !soundEnabled;
+      els.soundBtn.setAttribute("aria-pressed", String(soundEnabled));
+      els.soundBtn.textContent = soundEnabled ? "🔊 Sonido activado" : "🔇 Sonido silenciado";
+      if(soundEnabled) playTone("success");
+    }
+
+    document.querySelectorAll(".drop-zone").forEach(zone => {
+      zone.addEventListener("click", () => classify(zone.dataset.type));
+      zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("drag-over");
+      });
+      zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("drag-over");
+        classify(zone.dataset.type);
+      });
+    });
+
+    els.sourceCard.addEventListener("dragstart", e => {
+      els.sourceCard.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", gameSources[currentIndex].tipo);
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    els.sourceCard.addEventListener("dragend", () => {
+      els.sourceCard.classList.remove("dragging");
+      document.querySelectorAll(".drop-zone").forEach(z => z.classList.remove("drag-over"));
+    });
+
+    document.addEventListener("keydown", e => {
+      if(!els.gameScreen.classList.contains("active") || els.questionModal.classList.contains("active")) return;
+      if(e.key === "1") classify("escrita");
+      if(e.key === "2") classify("material");
+      if(e.key === "3") classify("oral");
+    });
+
+    els.startBtn.addEventListener("click", startGame);
+    els.continueBtn.addEventListener("click", completeSource);
+    els.restartBtn.addEventListener("click", startGame);
+    els.restartFromReviewBtn.addEventListener("click", startGame);
+    els.soundBtn.addEventListener("click", toggleSound);
+
+    els.reviewBtn.addEventListener("click", () => {
+      buildReview();
+      showScreen(els.reviewScreen);
+    });
+
+    els.backFinalBtn.addEventListener("click", () => showScreen(els.finalScreen));
+
+    initKey();
+  </script>
+</body>
+</html>
